@@ -1,0 +1,190 @@
+{
+  "enable": {
+    "description": "启用插件",
+    "type": "bool",
+    "default": true
+  },
+  "dashboard_title": {
+    "description": "监控面板标题",
+    "type": "string",
+    "default": "Server Performance Control Tower"
+  },
+  "servers": {
+    "description": "服务器探针列表",
+    "type": "template_list",
+    "hint": "每台服务器运行 probe/linux_probe.py 或兼容 JSON 探针接口。token 会作为 Authorization: Bearer <token> 发送。",
+    "templates": {
+      "server": {
+        "name": "服务器",
+        "hint": "HTTP GET 返回 JSON 指标的服务器探针。",
+        "items": {
+          "name": {
+            "description": "显示名称",
+            "type": "string",
+            "default": "edge-01"
+          },
+          "endpoint": {
+            "description": "探针地址",
+            "type": "string",
+            "hint": "例如 http://10.0.0.11:9810/metrics",
+            "default": ""
+          },
+          "token": {
+            "description": "访问令牌",
+            "type": "string",
+            "hint": "留空表示不鉴权。填写后插件请求时自动添加 Authorization: Bearer <token>。",
+            "default": ""
+          },
+          "location": {
+            "description": "展示地理位置",
+            "type": "string",
+            "hint": "优先按这里显示，例如 Singapore / Tokyo / 上海；留空时才使用探针返回的 location。",
+            "default": ""
+          },
+          "remark": {
+            "description": "备注名",
+            "type": "string",
+            "default": ""
+          },
+          "headers": {
+            "description": "额外请求头 JSON",
+            "type": "text",
+            "hint": "可选 JSON 对象，例如 {\"X-Source\":\"astrbot\"}。",
+            "default": "{}"
+          }
+        }
+      }
+    }
+  },
+  "servers_json": {
+    "description": "服务器列表 JSON 备用配置",
+    "type": "text",
+    "hint": "如果当前 AstrBot 版本无法使用 template_list，可在这里填写数组 JSON。servers 配置为空时使用此项。",
+    "editor_mode": true,
+    "editor_language": "json",
+    "editor_theme": "vs-dark",
+    "default": "[]"
+  },
+  "request_timeout_seconds": {
+    "description": "探针请求超时秒数",
+    "type": "float",
+    "default": 8.0
+  },
+  "probe_retry_count": {
+    "description": "探针请求重试次数",
+    "type": "int",
+    "hint": "HTTP 408/429/500/502/503/504、超时和临时网络异常会按此次数重试；代码限制到 1-6。",
+    "default": 2
+  },
+  "probe_retry_delay_seconds": {
+    "description": "探针重试退避秒数",
+    "type": "float",
+    "hint": "第 2 次请求等待此秒数，第 3 次等待 2 倍；代码限制到 0-10。",
+    "default": 0.45
+  },
+  "enable_tcp_fallback_detection": {
+    "description": "启用 TCP 可达兜底检测",
+    "type": "bool",
+    "hint": "开启后，如果 HTTP 探针失败但服务器的 SSH 端口或探针端口可连接，图片中显示“探针异常”而不是“离线”。",
+    "default": true
+  },
+  "tcp_fallback_ports": {
+    "description": "TCP 兜底检测端口",
+    "type": "string",
+    "hint": "逗号分隔，例如 22 或 22,2222。插件会自动额外检测 endpoint 中的探针端口。",
+    "default": "22"
+  },
+  "tcp_fallback_timeout_seconds": {
+    "description": "TCP 兜底检测超时秒数",
+    "type": "float",
+    "default": 1.5
+  },
+  "max_concurrent_requests": {
+    "description": "最大并发探针请求数",
+    "type": "int",
+    "default": 12
+  },
+  "image_quality": {
+    "description": "监控图 JPEG 质量",
+    "type": "int",
+    "hint": "代码会限制到 30-95。",
+    "default": 92
+  },
+  "local_render_scale": {
+    "description": "本地渲染精度倍率",
+    "type": "int",
+    "hint": "local_pillow 会先按倍率渲染再缩小输出，提高文字、圆角和图表抗锯齿；代码限制到 1-3。",
+    "default": 2
+  },
+  "image_send_mode": {
+    "description": "图片发送模式",
+    "type": "string",
+    "hint": "onebot_url/onebot_file 会直接调用 OneBot v11 原生 send_group_msg/send_private_msg 发送 image 段；本地文件会自动转 base64，避免 OneBot 读不到 AstrBot /tmp 文件；astrbot 使用 AstrBot MessageChain 发送。",
+    "options": [
+      "onebot_url",
+      "onebot_file",
+      "astrbot"
+    ],
+    "default": "onebot_url"
+  },
+  "render_backend": {
+    "description": "图片渲染后端",
+    "type": "string",
+    "hint": "local_pillow 为默认本地渲染，不依赖 AstrBot 远端 t2i 服务；html_remote 使用 AstrBot html_render 远端渲染；auto 先远端，失败后本地兜底。",
+    "options": [
+      "local_pillow",
+      "html_remote",
+      "auto"
+    ],
+    "default": "local_pillow"
+  },
+  "local_font_path": {
+    "description": "本地渲染字体路径",
+    "type": "string",
+    "hint": "可选。local_pillow 渲染中文方块时填写 CJK 字体文件路径，例如 /usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc。留空时自动寻找 Noto/思源/文泉驿等中文字体。",
+    "default": ""
+  },
+  "enable_auto_push": {
+    "description": "启用自动推送",
+    "type": "bool",
+    "hint": "启用后先用 /srvmon bind 绑定当前 OneBot 会话为推送目标。",
+    "default": false
+  },
+  "auto_push_interval_seconds": {
+    "description": "自动推送间隔秒数",
+    "type": "int",
+    "hint": "代码会限制到 60-86400 秒。",
+    "default": 300
+  },
+  "initial_push_delay_seconds": {
+    "description": "启动后首次推送延迟秒数",
+    "type": "int",
+    "default": 10
+  },
+  "push_only_on_alert": {
+    "description": "仅异常时自动推送",
+    "type": "bool",
+    "hint": "开启后只有离线、CPU/内存/存储超过阈值时才自动发送图片。",
+    "default": false
+  },
+  "cpu_alert_percent": {
+    "description": "CPU 告警阈值百分比",
+    "type": "float",
+    "default": 85.0
+  },
+  "memory_alert_percent": {
+    "description": "内存告警阈值百分比",
+    "type": "float",
+    "default": 90.0
+  },
+  "storage_alert_percent": {
+    "description": "存储告警阈值百分比",
+    "type": "float",
+    "default": 90.0
+  },
+  "admin_only": {
+    "description": "命令仅管理员可用",
+    "type": "bool",
+    "default": true
+  }
+}

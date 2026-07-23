@@ -1,0 +1,9 @@
+name: astrbot_plugin_server_monitor
+display_name: 多服务器性能监控面板
+desc: 接入 OneBot v11，采集多台服务器 CPU、内存、存储、地理位置、系统、网络与磁盘 IO 指标，并渲染商业级暗色 SaaS 自适应监控图片发送。
+short_desc: OneBot v11 多服务器监控图片面板
+author: liang
+version: 1.0.7
+astrbot_version: ">=4.16,<5"
+support_platforms:
+  - aiocqhttp

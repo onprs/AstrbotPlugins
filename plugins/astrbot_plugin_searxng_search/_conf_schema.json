@@ -1,0 +1,72 @@
+{
+  "enable": {
+    "description": "启用插件",
+    "type": "bool",
+    "default": true
+  },
+  "base_url": {
+    "description": "SearXNG 地址",
+    "type": "string",
+    "hint": "填写本机或局域网 SearXNG 服务地址。可以填 http://127.0.0.1:8080，也可以直接填到 /search。",
+    "default": "http://127.0.0.1:8080"
+  },
+  "timeout_seconds": {
+    "description": "搜索超时秒数",
+    "type": "float",
+    "default": 10
+  },
+  "max_results": {
+    "description": "默认返回结果数",
+    "type": "int",
+    "hint": "工具调用未指定 max_results 时使用此值。插件会限制到 1-20。",
+    "default": 5
+  },
+  "language": {
+    "description": "默认搜索语言",
+    "type": "string",
+    "hint": "传给 SearXNG 的 language 参数，例如 zh-CN、en-US。留空则不传。",
+    "default": "zh-CN"
+  },
+  "categories": {
+    "description": "搜索分类",
+    "type": "list",
+    "hint": "传给 SearXNG 的 categories 参数，留空表示使用 SearXNG 默认分类。",
+    "default": [
+      "general"
+    ]
+  },
+  "engines": {
+    "description": "指定搜索引擎",
+    "type": "list",
+    "hint": "传给 SearXNG 的 engines 参数，留空表示使用 SearXNG 默认引擎。",
+    "default": []
+  },
+  "safesearch": {
+    "description": "安全搜索级别",
+    "type": "int",
+    "hint": "SearXNG safesearch 参数，通常 0=关闭，1=中等，2=严格。",
+    "default": 0
+  },
+  "time_range": {
+    "description": "默认时间范围",
+    "type": "string",
+    "hint": "可填 day、week、month、year，留空表示不限制。",
+    "default": ""
+  },
+  "result_snippet_chars": {
+    "description": "摘要最大字符数",
+    "type": "int",
+    "default": 300
+  },
+  "restrict_to_qq_official": {
+    "description": "仅允许 QQ 官方平台调用",
+    "type": "bool",
+    "hint": "开启后只有 qq_official 和 qq_official_webhook 会话可以使用此搜索工具。",
+    "default": true
+  },
+  "debug_log": {
+    "description": "输出调试日志",
+    "type": "bool",
+    "default": false
+  }
+}

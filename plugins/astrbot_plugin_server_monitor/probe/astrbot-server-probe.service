@@ -1,0 +1,18 @@
+[Unit]
+Description=AstrBot Server Monitor Probe
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+Environment=ASTRBOT_PROBE_PORT=9810
+Environment=ASTRBOT_PROBE_TOKEN=change-me
+Environment=ASTRBOT_PROBE_LOCATION=Unknown
+Environment=ASTRBOT_PROBE_REMARK=server
+ExecStart=/usr/bin/python3 /opt/astrbot-server-probe/linux_probe.py
+Restart=always
+RestartSec=3
+User=root
+
+[Install]
+WantedBy=multi-user.target

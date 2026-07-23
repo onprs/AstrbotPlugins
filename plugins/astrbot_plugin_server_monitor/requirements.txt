@@ -1,0 +1,2 @@
+aiohttp
+Pillow>=11.2.1
