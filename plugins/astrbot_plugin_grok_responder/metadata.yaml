@@ -1,0 +1,9 @@
+name: astrbot_plugin_grok_responder
+display_name: "@Grok 群消息响应"
+desc: 群聊中任何包含 @grok（不区分大小写）的消息，使用当前会话的 LLM 以 Grok 身份生成并回复一条消息，不 @ 发送者。
+short_desc: 群里 @grok 触发 LLM 回复
+author: onprs
+version: 1.0.0
+astrbot_version: ">=4.5.7,<5"
+support_platforms:
+  - aiocqhttp

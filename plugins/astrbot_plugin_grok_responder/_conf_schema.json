@@ -1,0 +1,18 @@
+{
+  "enable": {
+    "description": "启用插件",
+    "type": "bool",
+    "default": true
+  },
+  "cooldown_seconds": {
+    "description": "同群最小响应间隔（秒）",
+    "hint": "防止连续多条 @grok 消息造成 LLM 回复刷屏；0 表示不限制。",
+    "type": "int",
+    "default": 15
+  },
+  "fallback_text": {
+    "description": "LLM 失败时的兜底回复文案",
+    "type": "string",
+    "default": "🪐 Grok 暂时无法响应，请稍后再试。"
+  }
+}
