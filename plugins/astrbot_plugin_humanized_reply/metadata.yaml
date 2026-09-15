@@ -1,0 +1,9 @@
+name: astrbot_plugin_humanized_reply
+display_name: 拟人化群聊回复
+short_desc: 让群聊回复像真人一样混合使用 @、引用与普通消息
+desc: 接管官方回复的 @/引用开关，由模型按需表达指向并按场景概率兜底；为概率主动回复注入表达风格指令，避免只回应触发消息与附和式复读。
+author: onprs
+version: 1.0.0
+astrbot_version: ">=4.27.2,<5"
+support_platforms:
+  - aiocqhttp

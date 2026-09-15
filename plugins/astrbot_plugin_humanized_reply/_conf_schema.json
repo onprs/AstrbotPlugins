@@ -1,0 +1,157 @@
+{
+  "enable": {
+    "description": "启用插件",
+    "type": "bool",
+    "default": true
+  },
+  "mention": {
+    "description": "在回复中 @ 发送者",
+    "type": "object",
+    "hint": "模型没有输出指向标记时生效；模型明确指向时以模型的选择为准。",
+    "items": {
+      "passive_probability": {
+        "description": "被动回复的 @ 概率",
+        "hint": "被 @、唤醒词或 @grok 唤醒时生效。0 到 1。",
+        "type": "float",
+        "default": 0.1,
+        "slider": { "min": 0, "max": 1, "step": 0.01 }
+      },
+      "active_probability": {
+        "description": "主动回复的 @ 概率",
+        "hint": "概率抽样触发的群聊主动回复生效。0 到 1。",
+        "type": "float",
+        "default": 0.08,
+        "slider": { "min": 0, "max": 1, "step": 0.01 }
+      }
+    }
+  },
+  "quote": {
+    "description": "在回复中引用消息",
+    "type": "object",
+    "items": {
+      "passive_probability": {
+        "description": "被动回复的引用概率",
+        "hint": "被动回复通常直接回答，引用概率保持较低。0 到 1。",
+        "type": "float",
+        "default": 0.03,
+        "slider": { "min": 0, "max": 1, "step": 0.01 }
+      },
+      "active_probability": {
+        "description": "主动回复的引用概率",
+        "hint": "主动回复默认不引用触发消息，引用目标从更早的消息中抽取。0 到 1。",
+        "type": "float",
+        "default": 0.05,
+        "slider": { "min": 0, "max": 1, "step": 0.01 }
+      },
+      "max_age_seconds": {
+        "description": "引用目标的时效上限（秒）",
+        "hint": "只引用该时间范围内收到的消息。",
+        "type": "int",
+        "default": 600
+      }
+    }
+  },
+  "pointing_protocol": {
+    "description": "指向协议",
+    "type": "object",
+    "hint": "允许模型用 [[quote:mN]] 或 [[at:mN]] 标记表达指向。",
+    "items": {
+      "enable": {
+        "description": "允许模型用标记表达指向",
+        "type": "bool",
+        "default": true
+      },
+      "max_recent_messages": {
+        "description": "参考表最多列出的消息数",
+        "hint": "只列出模型本轮能看到的群消息，数量过大会干扰模型判断。",
+        "type": "int",
+        "default": 30
+      }
+    }
+  },
+  "active_reply_style": {
+    "description": "主动回复的表达风格",
+    "type": "object",
+    "items": {
+      "enable": {
+        "description": "为主动回复注入表达风格指令",
+        "hint": "关闭后只保留指向协议与回复形式的拟人化。",
+        "type": "bool",
+        "default": true
+      }
+    }
+  },
+  "anti_echo": {
+    "description": "防附和式复读",
+    "type": "object",
+    "hint": "检测回复是否只是把对方的话换一种说法重复。",
+    "items": {
+      "mode": {
+        "description": "处理方式",
+        "hint": "observe 只记录；strip 剥离指向标记按普通消息发送；rewrite 重新生成一次回复。",
+        "type": "string",
+        "options": ["observe", "strip", "rewrite"],
+        "default": "observe"
+      },
+      "similarity_threshold": {
+        "description": "相似度阈值",
+        "hint": "回复与来源消息的字符重合度达到该值即判定为附和。0 到 1。",
+        "type": "float",
+        "default": 0.6,
+        "slider": { "min": 0, "max": 1, "step": 0.01 }
+      },
+      "rewrite_rate_limit_per_session": {
+        "description": "单轮重写次数上限",
+        "hint": "仅在 rewrite 模式下生效，用于限制模型调用成本。",
+        "type": "int",
+        "default": 2
+      }
+    }
+  },
+  "ledger": {
+    "description": "群消息台账",
+    "type": "object",
+    "hint": "保存群消息的 message_id 与摘要，用于引用历史消息。",
+    "items": {
+      "persist": {
+        "description": "持久化台账",
+        "type": "bool",
+        "default": true
+      },
+      "max_messages_per_group": {
+        "description": "每群在内存中保留的消息数",
+        "type": "int",
+        "default": 200
+      },
+      "flush_interval_seconds": {
+        "description": "落盘间隔（秒）",
+        "type": "int",
+        "default": 30
+      }
+    }
+  },
+  "scope": {
+    "description": "生效范围",
+    "type": "object",
+    "items": {
+      "groups": {
+        "description": "生效的群号",
+        "hint": "留空表示所有群。",
+        "type": "list",
+        "default": []
+      },
+      "platforms": {
+        "description": "生效的平台",
+        "hint": "填写平台适配器类型，例如 aiocqhttp。留空表示所有平台。",
+        "type": "list",
+        "default": ["aiocqhttp"]
+      }
+    }
+  },
+  "apply_to_non_llm": {
+    "description": "对非模型回复也添加指向",
+    "hint": "开启后指令、工具等回复同样按概率添加 @ 或引用。",
+    "type": "bool",
+    "default": false
+  }
+}
