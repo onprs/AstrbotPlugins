@@ -9,3 +9,5 @@ reference/AstrBot/
 *.log
 /AGENTS.md
 /plan/
+/data/
+/test_quick.py
