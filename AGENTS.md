@@ -6,6 +6,10 @@
 - `reference/AstrBot/`：AstrBot 官方仓库，只作开发参考，不纳入根仓库版本控制，不在其中开发或提交改动。
 - `plan/`：存放开发计划。
 
+## 线上 GitHub 仓库
+
+- 仓库地址：`https://github.com/onprs/AstrbotPlugins.git`
+
 ## 官方参考
 
 1. 开始插件开发前执行 `git -C reference/AstrBot pull --ff-only` 更新官方源码。
