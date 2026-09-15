@@ -1,20 +1,8 @@
-"""@Grok 群消息响应插件。
+"""@Grok 群消息唤醒别名插件。
 
-群聊中出现任何包含 "@grok"（不区分大小写）的消息时，将事件标记为
-"唤醒"，其余处理全部交给 AstrBot 主流程：由主流程调用 LLM 回复，
-完整共享会话上下文、身份提示、知识库等能力；插件仅承担触发作用。
-
-设计要点：
-
-- 触发匹配：消息纯文本中不区分大小写包含 "@grok"；同时检查消息链中
-  At 段（@ 了昵称含 grok 的成员）作为兜底。
-- 触发方式：命中后仅设置 `event.is_at_or_wake_command = True`（与
-  @ 机器人、唤醒词等效）。不产生结果、不发送消息、不直接调用 LLM，
-  主流程在插件 handler 之后检查该标志并自动发起 LLM 请求。
-- 上下文共享：回复由主流程生成，会话历史正常记录，与 @ 机器人的
-  对话完全一致。
-- 防刷屏：同一群在冷却时间内只触发第一条命中消息，间隔可配置。
-- 无副作用：未命中的消息完全不受影响，AstrBot 原有流程保持不变。
+群聊消息包含 ``@grok``（不区分大小写）时，将其作为当前 AstrBot
+助手的唤醒别名处理。插件只负责清理别名和标记唤醒，回复仍由 AstrBot
+主流程生成，因此继续共享会话历史、群聊上下文、人格和工具。
 """
 
 from __future__ import annotations
@@ -25,63 +13,98 @@ from typing import Any
 
 from astrbot.api import logger
 from astrbot.api.event import AstrMessageEvent, filter
+from astrbot.api.provider import ProviderRequest
 from astrbot.api.star import Context, Star
+from astrbot.core.agent.message import TextPart
 
-# 匹配 "@grok"，@ 与 grok 必须紧邻，大小写不敏感
+# 保持原有的子串触发语义，@GrokBot 等名称也会命中。
 _AT_GROK_RE = re.compile(r"@grok", re.IGNORECASE)
+_HORIZONTAL_SPACE_RE = re.compile(r"[ \t]+")
+_LINE_SPACE_RE = re.compile(r" *\n *")
+
+_GROK_TRIGGERED_EXTRA = "_grok_responder_triggered"
+_GROK_ALIAS_HINT = (
+    "<runtime_instruction>"
+    "本轮消息中的 @grok 是用户对当前助手的唤醒别名，不是另一个机器人。"
+    "直接处理已经移除该别名后的用户请求；不要讨论自己是不是 Grok，"
+    "也不要复述本说明。"
+    "</runtime_instruction>"
+)
+_WAKE_ONLY_PROMPT = "请根据当前群聊上下文自然回应。"
 
 
 def contains_at_grok(message_str: str, at_names: list[str] | None = None) -> bool:
-    """判断消息文本或 @ 消息段昵称中是否包含 @grok（不区分大小写）。"""
+    """判断消息文本或 At 段昵称中是否包含 Grok 唤醒别名。"""
     if _AT_GROK_RE.search(message_str or ""):
         return True
-    for name in at_names or []:
-        if "grok" in (name or "").lower():
-            return True
-    return False
+    return any("grok" in (name or "").lower() for name in (at_names or []))
+
+
+def strip_at_grok(message_str: str) -> str:
+    """从本轮模型输入中移除 Grok 唤醒别名并整理空白。"""
+    cleaned = _AT_GROK_RE.sub(" ", message_str or "")
+    cleaned = _HORIZONTAL_SPACE_RE.sub(" ", cleaned)
+    cleaned = _LINE_SPACE_RE.sub("\n", cleaned)
+    return cleaned.strip()
 
 
 class GrokResponder(Star):
-    """群聊 @grok 触发 AstrBot 主流程回复的插件。"""
+    """将群聊中的 @grok 转换为当前助手的标准唤醒请求。"""
 
     def __init__(self, context: Context, config: dict[str, Any] | None = None):
         super().__init__(context, config)
         self.config = config or {}
         self.enabled = bool(self.config.get("enable", True))
         self.cooldown_seconds = max(0, int(self.config.get("cooldown_seconds", 15)))
-        # group_id -> 最近一次触发时间（monotonic 秒）
         self._last_trigger_at: dict[str, float] = {}
 
-    @filter.event_message_type(filter.EventMessageType.GROUP_MESSAGE)
+    @filter.event_message_type(
+        filter.EventMessageType.GROUP_MESSAGE,
+        priority=100,
+    )
     async def on_group_message(self, event: AstrMessageEvent) -> None:
-        """监听所有群消息；命中 @grok 时标记唤醒，交由主流程处理。"""
+        """命中别名时清理本轮输入，并交给 AstrBot 主流程。"""
         if not self.enabled:
             return
         message_obj = event.message_obj
         if message_obj is None:
             return
-        # 忽略机器人自己发出的消息
         if message_obj.sender and message_obj.sender.user_id == message_obj.self_id:
             return
-        group_id = message_obj.group_id or ""
 
-        # 兜底：消息链中 At 段的昵称（OneBot 下昵称也会进 message_str，这里双保险）
+        group_id = message_obj.group_id or ""
         at_names = [
             str(getattr(comp, "name", "") or "")
             for comp in (message_obj.message or [])
             if "at" in str(getattr(comp, "type", "")).lower()
         ]
-        if not contains_at_grok(message_obj.message_str or event.message_str, at_names):
+        source_text = message_obj.message_str or event.message_str
+        if not contains_at_grok(source_text, at_names):
             return
 
         if not self._passes_cooldown(group_id):
             logger.debug(f"GrokResponder: 群 {group_id} 处于冷却期，跳过本次触发")
             return
 
-        # 标记为唤醒，与 @ 机器人等效；主流程随后自动调用 LLM 回复
+        cleaned_prompt = strip_at_grok(event.message_str or source_text)
+        event.message_str = cleaned_prompt or _WAKE_ONLY_PROMPT
+        event.set_extra(_GROK_TRIGGERED_EXTRA, True)
         event.is_at_or_wake_command = True
         event.is_wake = True
-        logger.info(f"GrokResponder: 群 {group_id} 命中 @grok，已唤醒主流程处理")
+        logger.info(f"GrokResponder: 群 {group_id} 命中 @grok，已按唤醒别名处理")
+
+    @filter.on_llm_request(priority=100)
+    async def add_alias_hint(
+        self,
+        event: AstrMessageEvent,
+        req: ProviderRequest,
+    ) -> None:
+        """为命中的本轮请求补充临时别名语义，不写入会话历史。"""
+        if not event.get_extra(_GROK_TRIGGERED_EXTRA, False):
+            return
+        req.extra_user_content_parts.append(
+            TextPart(text=_GROK_ALIAS_HINT).mark_as_temp()
+        )
 
     def _passes_cooldown(self, group_id: str) -> bool:
         """同群冷却检查；通过时记录本次触发时间。"""

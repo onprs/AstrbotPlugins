@@ -1,0 +1,9 @@
+name: astrbot_plugin_sticker
+display_name: 表情包
+short_desc: 将收藏表情暴露给 LLM，自主决定是否发表情包
+desc: 在 WebUI 中管理收藏表情并备注描述，LLM 在被动与主动回复时可自主选择发送表情包（QQ 表情包格式）。
+author: onprs
+version: 1.1.2
+astrbot_version: ">=4.27.2,<5"
+support_platforms:
+  - aiocqhttp

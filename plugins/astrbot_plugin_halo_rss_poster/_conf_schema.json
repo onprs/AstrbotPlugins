@@ -14,7 +14,7 @@
   "poll_interval_seconds": {
     "description": "轮询间隔秒数",
     "type": "int",
-    "hint": "后台检查 RSS 的间隔。插件会限制到 30-86400 秒。",
+    "hint": "后台检查 RSS 的间隔，代码会限制到 30-86400 秒。",
     "default": 300
   },
   "request_timeout_seconds": {
@@ -25,91 +25,83 @@
   "request_headers": {
     "description": "请求头 JSON",
     "type": "text",
-    "hint": "填写 JSON 对象文本，例如 {\"Host\":\"blog.onprs.top\",\"User-Agent\":\"AstrBot-Halo-RSS/1.0\"}。若不需要自定义请求头请保持 {}。",
+    "hint": "填写 JSON 对象文本，例如 {\"Host\":\"blog.onprs.top\",\"User-Agent\":\"AstrBot-Halo-RSS/1.0\"}。不需要时保持 {}。",
     "default": "{}"
   },
   "rewrite_cover_to_rss_origin": {
     "description": "封面图使用 RSS 源站",
     "type": "bool",
-    "hint": "开启后，若 RSS 中的封面图和文章链接同域，会把封面图地址改成 rss_url 的源站域名，绕过 CDN 人机校验页。",
+    "hint": "开启后会把封面图地址改写到 rss_url 的源站域名，绕过 CDN 人机校验页。",
     "default": true
-  },
-  "render_mode": {
-    "description": "预览图渲染模式",
-    "type": "string",
-    "hint": "默认 local_pillow：在 AstrBot 容器内使用 Pillow 本地渲染，避免远端 HTML 渲染服务 503/超时。可选 local_pillow、remote_html。",
-    "default": "local_pillow"
   },
   "local_render_output_dir": {
     "description": "本地渲染输出目录",
     "type": "string",
-    "hint": "local_pillow 模式下 JPEG 保存目录。留空时使用系统临时目录。若 image_send_mode=onebot_file，请确保 OneBot 协议端也能访问该目录。",
+    "hint": "JPEG 保存目录，留空使用系统临时目录。若 image_send_mode=onebot_file，请确保 OneBot 协议端也能访问该目录。",
     "default": ""
   },
   "local_render_font_path": {
     "description": "本地渲染字体路径",
     "type": "string",
-    "hint": "Docker 内建议把中文字体挂载为 /AstrBot/data/font.ttf，或在这里填写字体绝对路径。留空会自动查找常见中文字体。",
+    "hint": "Docker 内建议把中文字体挂载为 /AstrBot/data/font.ttf，或在此填写字体绝对路径。留空自动查找常见中文字体。",
     "default": ""
   },
   "local_render_scale": {
     "description": "本地渲染超采样倍率",
     "type": "int",
-    "hint": "默认 2。Pillow 会先放大绘制再缩回 1600x900，减轻文字、圆角和边框锯齿。代码会限制到 1-3。",
-    "default": 2
+    "hint": "默认 3。先放大绘制再缩回 1600x900，倍率越高文字越细腻但更耗时。代码会限制到 1-4。",
+    "default": 3
   },
-  "embed_cover_image": {
-    "description": "渲染前内嵌封面图",
-    "type": "bool",
-    "hint": "默认开启。插件会先下载封面图并转成 data URL 写入预览图 HTML，避免远端渲染器无法访问源站图片导致背景不显示。",
-    "default": true
+  "image_format": {
+    "description": "预览图输出格式",
+    "type": "string",
+    "hint": "jpeg 或 png。jpeg 已关闭色度抽样并默认 quality=95，清晰度足够且体积小；png 完全无损但体积大 3-5 倍，OneBot 发送更慢。",
+    "default": "jpeg"
   },
   "cover_download_timeout_seconds": {
     "description": "封面下载超时秒数",
     "type": "int",
-    "hint": "仅在 embed_cover_image 开启时使用。代码会限制到 1-60 秒。",
     "default": 8
   },
   "cover_download_retries": {
     "description": "封面下载重试次数",
     "type": "int",
-    "hint": "local_pillow 和 remote_html 内嵌封面都会使用。默认 2，源站偶发 503/超时时会再试一次，代码会限制到 1-5 次。",
+    "hint": "默认 2，源站偶发 503/超时时自动重试，代码会限制到 1-5 次。下载失败会使用渐变兜底背景。",
     "default": 2
   },
   "max_cover_bytes": {
     "description": "封面最大下载字节数",
     "type": "int",
-    "hint": "仅在 embed_cover_image 开启时使用。默认 5242880 即 5MB，过大的封面会退回外链渲染。",
+    "hint": "默认 5242880 即 5MB，超过则放弃该封面并使用兜底背景。",
     "default": 5242880
   },
   "fetch_article_taxonomy": {
-    "description": "拉取文章页补全分类标签",
+    "description": "拉取文章页补全分类标签和字数",
     "type": "bool",
-    "hint": "RSS 通常只包含分类。开启后，推送新文章前会访问源站文章页，读取主题页面里的分类和标签并显示在预览图中。",
+    "hint": "RSS 通常只包含分类。开启后推送前会访问源站文章页，读取主题页面里的分类、标签和 Halo 官方字数。",
     "default": true
   },
   "max_tag_chips": {
     "description": "预览图最多显示标签数",
     "type": "int",
-    "hint": "分类会单独显示，标签过多时仅显示前几个，避免挤压摘要。",
     "default": 4
   },
   "image_quality": {
     "description": "预览图 JPEG 质量",
     "type": "int",
-    "hint": "插件使用 JPEG 渲染并只发送图片消息。代码会限制到 30-95，数值越高越清晰、体积也越大。",
-    "default": 88
+    "hint": "代码会限制到 30-100，数值越高越清晰、体积越大。默认 95，且已关闭色度抽样，文字边缘不再发虚。",
+    "default": 95
   },
   "cover_thumbnail_size": {
     "description": "Halo 封面缩略图尺寸",
     "type": "string",
-    "hint": "Halo 缩略图接口的 size 参数，默认 l。可填 m、l、xl；越大越清晰、加载越慢。",
-    "default": "l"
+    "hint": "Halo 缩略图接口的 size 参数，默认 xl。可填 m、l、xl；越大背景封面越清晰、加载越慢。",
+    "default": "xl"
   },
   "image_send_mode": {
     "description": "图片发送模式",
     "type": "string",
-    "hint": "默认 onebot_base64：本地渲染后直接调用 OneBot 原生接口发送 base64 图片，适合 AstrBot Docker 部署且不要求协议端共享文件目录。可选 onebot_base64、onebot_file、onebot_url、astrbot。",
+    "hint": "默认 onebot_base64：直接调用 OneBot 原生接口发送 base64 图片，适合 AstrBot Docker 部署。可选 onebot_base64、onebot_file、astrbot。",
     "default": "onebot_base64"
   },
   "admin_only": {
@@ -120,7 +112,7 @@
   "push_existing_on_first_run": {
     "description": "首次运行推送已有文章",
     "type": "bool",
-    "hint": "默认关闭，避免安装后把 RSS 里的历史文章刷屏。关闭时首次检查只记录已有文章。",
+    "hint": "默认关闭，避免安装后把 RSS 历史文章刷屏。关闭时首次检查只记录已有文章。",
     "default": false
   },
   "max_seen_items": {
@@ -136,7 +128,7 @@
   "summary_chars": {
     "description": "摘要最大字符数",
     "type": "int",
-    "default": 120
+    "default": 140
   },
   "site_name": {
     "description": "站点名称",
@@ -146,7 +138,7 @@
   "timezone": {
     "description": "显示时区",
     "type": "string",
-    "hint": "例如 Asia/Shanghai。若运行环境缺少时区数据库，插件会保留 RSS 原始时区时间。",
+    "hint": "例如 Asia/Shanghai。若运行环境缺少时区数据库，则保留 RSS 原始时区时间。",
     "default": "Asia/Shanghai"
   },
   "debug_log": {

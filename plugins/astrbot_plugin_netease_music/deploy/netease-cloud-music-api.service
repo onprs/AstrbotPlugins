@@ -1,0 +1,44 @@
+[Unit]
+Description=Netease Cloud Music API Enhanced
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ncm-api
+Group=ncm-api
+WorkingDirectory=/opt/netease-cloud-music-api/node_modules/@neteasecloudmusicapienhanced/api
+Environment=HOST=127.0.0.1
+Environment=PORT=3010
+Environment=ENABLE_GENERAL_UNBLOCK=false
+Environment=http_proxy=
+Environment=https_proxy=
+Environment=no_proxy=
+Environment=HTTP_PROXY=
+Environment=HTTPS_PROXY=
+Environment=NO_PROXY=
+ExecStart=/usr/local/lib/node-v24.18.0/bin/node /opt/netease-cloud-music-api/node_modules/@neteasecloudmusicapienhanced/api/app.js
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=20
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectKernelLogs=true
+ProtectClock=true
+ProtectHostname=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+LockPersonality=true
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+SystemCallArchitectures=native
+
+[Install]
+WantedBy=multi-user.target

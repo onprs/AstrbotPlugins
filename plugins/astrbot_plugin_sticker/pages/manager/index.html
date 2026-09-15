@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>表情包管理</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="head">
+        <h1>表情包管理</h1>
+        <p class="hint">上传文件会加入机器人 QQ 的收藏表情，以表情包格式发送。</p>
+      </header>
+
+      <section class="card">
+        <h2>上传</h2>
+        <div class="row">
+          <input id="fileInput" type="file" accept="image/*" multiple />
+          <button id="uploadBtn" type="button">上传</button>
+        </div>
+        <div id="pendingBox" class="pending hidden"></div>
+      </section>
+
+      <section class="card">
+        <div class="row between">
+          <h2>表情包列表</h2>
+          <button id="refreshBtn" type="button" class="ghost">刷新</button>
+        </div>
+        <div id="status" class="status"></div>
+        <div id="list" class="grid"></div>
+      </section>
+    </div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

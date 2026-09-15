@@ -1,0 +1,9 @@
+name: astrbot_plugin_group_reply_guard
+display_name: 群聊主动回复防刷屏
+short_desc: 防止群聊工具刷屏并校正自动回复的上下文选择
+desc: 在群聊 LLM 请求中关闭主动发消息工具的模型可见性，让普通回复只经过 AstrBot 的标准发送阶段；同时清理显式思考标签，并让概率主动回复综合群聊上下文选择自然话题。
+author: onprs
+version: 1.0.4
+astrbot_version: ">=4.23.1,<5"
+support_platforms:
+  - aiocqhttp

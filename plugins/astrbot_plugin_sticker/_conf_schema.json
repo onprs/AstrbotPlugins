@@ -1,0 +1,48 @@
+{
+  "enable": {
+    "description": "启用插件",
+    "type": "bool",
+    "default": true
+  },
+  "cooldown_seconds": {
+    "description": "同会话表情包发送冷却（秒），0 表示不限制",
+    "type": "int",
+    "default": 30
+  },
+  "allow_private": {
+    "description": "允许私聊中使用表情包",
+    "type": "bool",
+    "default": false
+  },
+  "max_inject": {
+    "description": "注入给 LLM 的表情包最大数量",
+    "type": "int",
+    "default": 50
+  },
+  "max_description_chars": {
+    "description": "单张表情备注注入给 LLM 的最大字数",
+    "type": "int",
+    "default": 120
+  },
+  "max_stickers": {
+    "description": "本地管理的表情包数量上限",
+    "type": "int",
+    "default": 400
+  },
+  "max_file_mb": {
+    "description": "单张表情包大小上限（MB）",
+    "type": "int",
+    "default": 10
+  },
+  "max_image_pixels": {
+    "description": "单张表情包像素总数上限",
+    "type": "int",
+    "default": 25000000
+  },
+  "allowed_exts": {
+    "description": "允许上传的文件后缀",
+    "type": "list",
+    "items": { "type": "string" },
+    "default": ["jpg", "jpeg", "png", "gif", "webp"]
+  }
+}

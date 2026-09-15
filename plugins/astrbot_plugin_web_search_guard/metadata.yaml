@@ -1,0 +1,9 @@
+name: astrbot_plugin_web_search_guard
+display_name: 联网搜索约束
+short_desc: 约束搜索年份、日期范围、证据核验和来源链接
+desc: 通过插件钩子为 AstrBot 网页搜索增加当前日期、查询年份、时间范围、实体归属、GitHub 官方版本核验和真实来源 URL 约束。
+author: onprs
+version: 1.1.1
+astrbot_version: ">=4.24.0,<5"
+support_platforms:
+  - aiocqhttp

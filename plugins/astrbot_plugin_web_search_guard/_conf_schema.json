@@ -1,0 +1,19 @@
+{
+  "enable": {
+    "description": "启用搜索约束",
+    "type": "bool",
+    "default": true
+  },
+  "recent_days": {
+    "description": "近期搜索时间窗口（天）",
+    "hint": "用于“最近、近期、刚发布”等查询；插件仍会以服务器当前日期为基准。",
+    "type": "int",
+    "default": 90
+  },
+  "max_source_urls": {
+    "description": "回复兜底附加的来源链接数",
+    "hint": "模型未主动引用来源时，从实际搜索结果中附加 1-5 个 URL。",
+    "type": "int",
+    "default": 2
+  }
+}

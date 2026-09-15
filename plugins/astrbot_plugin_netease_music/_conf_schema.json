@@ -1,0 +1,55 @@
+{
+  "enable": {
+    "description": "启用插件",
+    "type": "bool",
+    "default": true
+  },
+  "api_base_url": {
+    "description": "网易云 API 地址",
+    "hint": "建议使用仅监听本机的 NeteaseCloudMusicApi Enhanced 服务。",
+    "type": "string",
+    "default": "http://127.0.0.1:3010"
+  },
+  "request_timeout": {
+    "description": "API 请求超时（秒）",
+    "type": "int",
+    "default": 20
+  },
+  "qr_poll_interval": {
+    "description": "二维码状态检查间隔（秒）",
+    "type": "int",
+    "default": 3
+  },
+  "qr_login_timeout": {
+    "description": "二维码登录超时（秒）",
+    "type": "int",
+    "default": 300
+  },
+  "confirmation_timeout": {
+    "description": "账号绑定确认超时（秒）",
+    "type": "int",
+    "default": 600
+  },
+  "message_chunk_chars": {
+    "description": "单条文本最大字符数",
+    "type": "int",
+    "default": 1500
+  },
+  "analysis_prompt": {
+    "description": "歌单分析提示词",
+    "hint": "用于设置 LLM 分析歌单时的侧重点、输出结构和表达风格。留空时使用默认分析要求。",
+    "type": "text",
+    "default": "请用中文分析歌单，并依次包含：\n1. 整体画像；\n2. 音乐偏好与结构；\n3. 有数据或曲目依据的亮点与变化；\n4. 代表曲目；\n5. 简短总结。\n不要使用 Markdown 表格。"
+  },
+  "analysis_track_limit": {
+    "description": "分析曲目样本上限",
+    "hint": "全量歌曲都会参与统计；超过此数量时均匀抽取曲目明细提供给 LLM。",
+    "type": "int",
+    "default": 600
+  },
+  "analysis_prompt_max_chars": {
+    "description": "分析提示最大字符数",
+    "type": "int",
+    "default": 80000
+  }
+}

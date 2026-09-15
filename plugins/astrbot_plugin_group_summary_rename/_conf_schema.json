@@ -1,0 +1,35 @@
+{
+  "enable": {
+    "description": "启用插件",
+    "type": "bool",
+    "default": true
+  },
+  "trigger_time": {
+    "description": "默认固定触发时间",
+    "hint": "HH:MM 24 小时制，例如 20:00。各群可通过「群名总结 时间 HH:MM」单独覆盖。",
+    "type": "string",
+    "default": "20:00"
+  },
+  "rename_prompt": {
+    "description": "修改群名指导 prompt",
+    "hint": "附加到 LLM 请求中的补充要求，用于指导如何生成/修改群名称，例如：群名应体现当日热点话题，保持幽默风格。留空则不附加。",
+    "type": "text",
+    "default": ""
+  },
+  "history_count": {
+    "description": "每次拉取群消息条数",
+    "type": "int",
+    "default": 50
+  },
+  "name_max_len": {
+    "description": "群名最大长度（字符）",
+    "type": "int",
+    "default": 30
+  },
+  "check_interval": {
+    "description": "定时检查间隔（秒）",
+    "hint": "后台任务多久检查一次是否到达触发时间。",
+    "type": "int",
+    "default": 60
+  }
+}

@@ -1,0 +1,9 @@
+name: astrbot_plugin_group_summary_rename
+display_name: 群聊总结改名
+short_desc: 定时总结群聊并用 LLM 生成新群名，自动修改 QQ 群名称
+desc: 通过指令开启/关闭功能，设置固定触发时间；到点后拉取群聊历史消息，使用 AstrBot 配置的 LLM 总结群聊并生成新群名，通过 OneBot API 自动修改 QQ 群名称；支持附加"如何修改群名"的指导 prompt。
+author: onprs
+version: 1.0.0
+astrbot_version: ">=4.24.0,<5"
+support_platforms:
+  - aiocqhttp

@@ -1,9 +1,9 @@
 name: astrbot_plugin_halo_rss_poster
 display_name: Halo RSS 新文章预览推送
-desc: 轮询 Halo 博客 RSS，在 OneBot v11 会话中推送高级玻璃质感的新文章预览图。
-short_desc: Halo RSS 新文章图片推送
-author: liang
-version: 1.0.9
+desc: 轮询 Halo 博客 RSS，纯本地 Pillow 渲染玻璃拟态文章预览图，推送到 OneBot v11 会话。
+short_desc: Halo RSS 新文章本地渲染图片推送
+author: onprs
+version: 2.0.0
 astrbot_version: ">=4.16,<5"
 support_platforms:
   - aiocqhttp
