@@ -71,6 +71,22 @@ def _poke_target(component: Poke) -> str | None:
     return None
 
 
+class PokeToBotFilter(filter.CustomFilter):
+    """只放行目标为机器人的戳一戳，避免唤醒普通消息。"""
+
+    def filter(self, event: AstrMessageEvent, cfg) -> bool:
+        if event.get_platform_name() != SUPPORTED_PLATFORM:
+            return False
+        if str(event.get_sender_id()) == str(event.get_self_id()):
+            return False
+
+        bot_id = str(event.get_self_id())
+        for component in event.get_messages():
+            if isinstance(component, Poke) and _poke_target(component) == bot_id:
+                return True
+        return False
+
+
 class PokeReply(Star):
     """按配置回应机器人收到的戳一戳。"""
 
@@ -100,7 +116,7 @@ class PokeReply(Star):
         )
         self._last_reply_at: dict[tuple[str, str], float] = {}
 
-    @filter.event_message_type(filter.EventMessageType.ALL)
+    @filter.custom_filter(PokeToBotFilter)
     async def handle_poke(self, event: AstrMessageEvent):
         """只处理目标为机器人的戳一戳通知。"""
         if not self.enabled:

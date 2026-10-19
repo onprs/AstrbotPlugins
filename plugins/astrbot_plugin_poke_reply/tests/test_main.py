@@ -276,6 +276,31 @@ class PokeReplyTest(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(results, [])
         self.assertFalse(event.is_stopped())
 
+    def test_poke_filter_accepts_poke_to_bot(self):
+        event = FakeEvent([Poke(id="bot1")])
+
+        self.assertTrue(main.PokeToBotFilter().filter(event, {}))
+
+    def test_poke_filter_rejects_other_target(self):
+        event = FakeEvent([Poke(id="bot2")])
+
+        self.assertFalse(main.PokeToBotFilter().filter(event, {}))
+
+    def test_poke_filter_rejects_normal_message(self):
+        event = FakeEvent([Plain("你好")])
+
+        self.assertFalse(main.PokeToBotFilter().filter(event, {}))
+
+    def test_poke_filter_rejects_other_platform(self):
+        event = FakeEvent([Poke(id="bot1")], platform_name="telegram")
+
+        self.assertFalse(main.PokeToBotFilter().filter(event, {}))
+
+    def test_poke_filter_rejects_self_poke(self):
+        event = FakeEvent([Poke(id="bot1")], sender_id="bot1")
+
+        self.assertFalse(main.PokeToBotFilter().filter(event, {}))
+
     async def test_strip_invalid_poke_quote(self):
         plugin = self.make_plugin({"response_mode": "random"})
         event = FakeEvent([Poke(id="bot1")], message_id="poke-uuid")
