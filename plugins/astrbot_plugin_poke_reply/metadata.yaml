@@ -1,0 +1,9 @@
+name: astrbot_plugin_poke_reply
+display_name: 戳一戳回应
+short_desc: 被戳一戳时随机回复文本或触发 LLM 回复
+desc: 机器人被戳一戳时，从配置的回复文本列表中随机发送一条，或使用配置的提示词走 AstrBot 原有 LLM 回复链路，使用当前人设与对话上下文。
+author: onprs
+version: 1.0.0
+astrbot_version: ">=4.26.8,<5"
+support_platforms:
+  - aiocqhttp

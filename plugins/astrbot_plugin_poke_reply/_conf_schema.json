@@ -1,0 +1,36 @@
+{
+  "enable": {
+    "description": "启用插件",
+    "type": "bool",
+    "default": true
+  },
+  "response_mode": {
+    "description": "回应方式",
+    "type": "string",
+    "options": ["random", "llm"],
+    "labels": ["随机回复文本", "LLM 回复"],
+    "default": "random",
+    "hint": "随机回复文本：从下方列表随机发送一条；LLM 回复：用下方提示词触发 AstrBot 原有的 LLM 回复链路。"
+  },
+  "reply_texts": {
+    "description": "随机回复文本列表",
+    "type": "list",
+    "items": {
+      "type": "string"
+    },
+    "default": ["在呢，怎么啦？", "别戳啦，有事直说。", "戳我做什么？", "我在这儿。"],
+    "hint": "回应方式为“随机回复文本”时生效，每次随机发送其中一条。"
+  },
+  "llm_prompt": {
+    "description": "LLM 回复提示词",
+    "type": "text",
+    "default": "用户 {username}（ID：{user_id}）在{scene}里戳了你一下。请保持当前人设，结合最近的对话上下文，自然地回应这次戳一戳，只输出要发送给用户的内容。",
+    "hint": "回应方式为“LLM 回复”时生效。支持 {username}、{user_id}、{scene} 占位符。回复会使用当前对话、人设和上下文。"
+  },
+  "cooldown_seconds": {
+    "description": "同一用户冷却时间（秒）",
+    "type": "int",
+    "default": 0,
+    "hint": "同一会话内同一用户连续戳一戳时的最小回应间隔，0 表示不限制。"
+  }
+}
