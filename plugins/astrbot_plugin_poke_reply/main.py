@@ -75,15 +75,18 @@ class PokeToBotFilter(filter.CustomFilter):
     """只放行目标为机器人的戳一戳，避免唤醒普通消息。"""
 
     def filter(self, event: AstrMessageEvent, cfg) -> bool:
-        if event.get_platform_name() != SUPPORTED_PLATFORM:
-            return False
-        if str(event.get_sender_id()) == str(event.get_self_id()):
-            return False
+        try:
+            if event.get_platform_name() != SUPPORTED_PLATFORM:
+                return False
+            if str(event.get_sender_id()) == str(event.get_self_id()):
+                return False
 
-        bot_id = str(event.get_self_id())
-        for component in event.get_messages():
-            if isinstance(component, Poke) and _poke_target(component) == bot_id:
-                return True
+            bot_id = str(event.get_self_id())
+            for component in event.get_messages():
+                if isinstance(component, Poke) and _poke_target(component) == bot_id:
+                    return True
+        except Exception:  # noqa: BLE001 - 异常时跳过本次事件，避免影响普通消息
+            return False
         return False
 
 
