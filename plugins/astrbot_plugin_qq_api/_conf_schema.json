@@ -1,0 +1,451 @@
+{
+  "enable": {
+    "description": "启用插件",
+    "type": "bool",
+    "default": true
+  },
+  "write_require_admin": {
+    "description": "修改类操作仅限 AstrBot 管理员",
+    "hint": "开启后，只有 AstrBot 全局管理员（admins_id）发起的对话可以调用修改类工具。关闭后所有能唤醒 bot 的用户都可以修改。",
+    "type": "bool",
+    "default": true
+  },
+  "write_allowed_users": {
+    "description": "额外允许修改的 QQ 号",
+    "hint": "无论是否为 AstrBot 管理员，列表中的 QQ 号都可以调用修改类工具。留空表示不额外授权。",
+    "type": "list",
+    "items": {
+      "type": "string"
+    },
+    "default": []
+  },
+  "group_read": {
+    "description": "群信息读取",
+    "hint": "控制 bot 可以读取哪些群内容。",
+    "type": "object",
+    "items": {
+      "list": {
+        "description": "机器人加入的群列表",
+        "type": "bool",
+        "default": true
+      },
+      "info": {
+        "description": "群资料",
+        "hint": "群名、群号、成员数、群主、管理员、简介、等级等。",
+        "type": "bool",
+        "default": true
+      },
+      "members": {
+        "description": "群成员列表",
+        "type": "bool",
+        "default": true
+      },
+      "member": {
+        "description": "单个群成员资料",
+        "type": "bool",
+        "default": true
+      },
+      "announcements": {
+        "description": "群公告",
+        "type": "bool",
+        "default": true
+      },
+      "files": {
+        "description": "群文件与文件夹",
+        "type": "bool",
+        "default": true
+      },
+      "honor": {
+        "description": "群荣誉",
+        "hint": "群龙王、群聊之火、群聊炽焰、快乐源泉等。",
+        "type": "bool",
+        "default": true
+      },
+      "messages": {
+        "description": "群历史消息",
+        "type": "bool",
+        "default": true
+      },
+      "essence": {
+        "description": "群精华消息",
+        "type": "bool",
+        "default": true
+      },
+      "system_messages": {
+        "description": "群系统消息",
+        "hint": "加群请求、邀请入群请求等。",
+        "type": "bool",
+        "default": true
+      },
+      "shut_list": {
+        "description": "群禁言列表",
+        "type": "bool",
+        "default": true
+      },
+      "at_all_remain": {
+        "description": "剩余 @全体成员 次数",
+        "type": "bool",
+        "default": true
+      }
+    }
+  },
+  "group_info_write": {
+    "description": "群资料修改",
+    "hint": "修改群本身的信息。默认关闭。",
+    "type": "object",
+    "items": {
+      "set_name": {
+        "description": "修改群名",
+        "type": "bool",
+        "default": false
+      },
+      "set_portrait": {
+        "description": "修改群头像",
+        "hint": "只接受 http(s) 图片地址或 base64 图片数据。",
+        "type": "bool",
+        "default": false
+      },
+      "set_remark": {
+        "description": "修改机器人对群的备注",
+        "type": "bool",
+        "default": false
+      },
+      "send_announcement": {
+        "description": "发布群公告",
+        "hint": "可附带图片地址。发布后出现在群公告列表，可读取公告获取 notice_id 后删除。",
+        "type": "bool",
+        "default": false
+      },
+      "delete_announcement": {
+        "description": "删除群公告",
+        "hint": "需要群公告 ID，可先读取群公告获取。",
+        "type": "bool",
+        "default": false
+      }
+    }
+  },
+  "group_member_write": {
+    "description": "群成员管理",
+    "hint": "对群成员执行管理操作。默认关闭。",
+    "type": "object",
+    "items": {
+      "set_card": {
+        "description": "修改群名片",
+        "type": "bool",
+        "default": false
+      },
+      "set_special_title": {
+        "description": "设置专属头衔",
+        "type": "bool",
+        "default": false
+      },
+      "set_admin": {
+        "description": "设置或取消管理员",
+        "type": "bool",
+        "default": false
+      },
+      "ban": {
+        "description": "禁言或解除禁言",
+        "type": "bool",
+        "default": false
+      },
+      "whole_ban": {
+        "description": "全员禁言或解除全员禁言",
+        "type": "bool",
+        "default": false
+      },
+      "kick": {
+        "description": "踢出群成员",
+        "type": "bool",
+        "default": false
+      }
+    }
+  },
+  "group_file_write": {
+    "description": "群文件修改",
+    "hint": "管理群文件与文件夹。默认关闭。",
+    "type": "object",
+    "items": {
+      "upload": {
+        "description": "上传群文件",
+        "hint": "只接受 http(s) 文件地址或 base64 数据。",
+        "type": "bool",
+        "default": false
+      },
+      "delete": {
+        "description": "删除群文件",
+        "type": "bool",
+        "default": false
+      },
+      "create_folder": {
+        "description": "创建群文件夹",
+        "type": "bool",
+        "default": false
+      },
+      "delete_folder": {
+        "description": "删除群文件夹",
+        "type": "bool",
+        "default": false
+      },
+      "move": {
+        "description": "移动群文件",
+        "type": "bool",
+        "default": false
+      }
+    }
+  },
+  "group_message_write": {
+    "description": "群消息操作",
+    "hint": "精华、撤回、表情回应和入群请求处理。默认关闭。",
+    "type": "object",
+    "items": {
+      "recall": {
+        "description": "撤回消息",
+        "type": "bool",
+        "default": false
+      },
+      "reaction": {
+        "description": "给消息添加表情回应",
+        "type": "bool",
+        "default": false
+      },
+      "mark_read": {
+        "description": "标记消息已读",
+        "type": "bool",
+        "default": false
+      },
+      "handle_request": {
+        "description": "处理加群请求",
+        "type": "bool",
+        "default": false
+      },
+      "set_essence": {
+        "description": "设置或移除精华消息",
+        "type": "bool",
+        "default": false
+      },
+      "delete_essence": {
+        "description": "移除精华消息",
+        "type": "bool",
+        "default": false
+      }
+    }
+  },
+  "group_lifecycle_write": {
+    "description": "群生命周期",
+    "hint": "高风险操作，默认关闭。",
+    "type": "object",
+    "items": {
+      "leave": {
+        "description": "退出群或解散群",
+        "type": "bool",
+        "default": false
+      }
+    }
+  },
+  "self_read": {
+    "description": "机器人自身信息读取",
+    "type": "object",
+    "items": {
+      "account": {
+        "description": "登录账号、在线状态和协议版本",
+        "type": "bool",
+        "default": true
+      },
+      "profile": {
+        "description": "自己的 QQ 资料",
+        "type": "bool",
+        "default": true
+      },
+      "likes": {
+        "description": "自己收到的点赞资料",
+        "type": "bool",
+        "default": true
+      },
+      "friends": {
+        "description": "好友列表",
+        "type": "bool",
+        "default": true
+      }
+    }
+  },
+  "self_write": {
+    "description": "机器人自身信息修改",
+    "hint": "修改机器人 QQ 账号的资料。默认关闭。",
+    "type": "object",
+    "items": {
+      "set_profile": {
+        "description": "修改昵称、签名或性别",
+        "type": "bool",
+        "default": false
+      },
+      "set_avatar": {
+        "description": "修改头像",
+        "hint": "只接受 http(s) 图片地址或 base64 图片数据。",
+        "type": "bool",
+        "default": false
+      },
+      "set_online_status": {
+        "description": "修改在线状态",
+        "type": "bool",
+        "default": false
+      },
+      "set_input_status": {
+        "description": "设置输入状态",
+        "hint": "向指定用户展示“正在输入”等状态。",
+        "type": "bool",
+        "default": false
+      },
+      "set_long_nick": {
+        "description": "修改长昵称",
+        "type": "bool",
+        "default": false
+      }
+    }
+  },
+  "user_read": {
+    "description": "其他用户信息读取",
+    "type": "object",
+    "items": {
+      "info": {
+        "description": "陌生人或好友资料",
+        "type": "bool",
+        "default": true
+      },
+      "private_messages": {
+        "description": "私聊历史消息",
+        "type": "bool",
+        "default": true
+      },
+      "likes": {
+        "description": "指定用户的点赞资料",
+        "type": "bool",
+        "default": true
+      },
+      "requests": {
+        "description": "可疑好友申请列表",
+        "hint": "返回的 flag 可用于处理好友申请。",
+        "type": "bool",
+        "default": true
+      }
+    }
+  },
+  "user_write": {
+    "description": "其他用户相关修改",
+    "hint": "好友关系与互动操作。默认关闭。",
+    "type": "object",
+    "items": {
+      "like": {
+        "description": "给指定用户点赞",
+        "type": "bool",
+        "default": false
+      },
+      "poke": {
+        "description": "戳一戳指定用户",
+        "type": "bool",
+        "default": false
+      },
+      "delete_friend": {
+        "description": "删除好友",
+        "type": "bool",
+        "default": false
+      },
+      "handle_request": {
+        "description": "处理好友请求",
+        "type": "bool",
+        "default": false
+      },
+      "set_remark": {
+        "description": "修改好友备注",
+        "type": "bool",
+        "default": false
+      },
+      "handle_doubt_request": {
+        "description": "处理可疑好友申请",
+        "hint": "NapCat 的可疑好友申请只支持同意。",
+        "type": "bool",
+        "default": false
+      }
+    }
+  },
+  "poke_reply": {
+    "description": "戳一戳回应",
+    "hint": "机器人被戳一戳时按配置回应，与上方 QQ 接口工具的开关互不影响。",
+    "type": "object",
+    "items": {
+      "enable": {
+        "description": "启用戳一戳回应",
+        "type": "bool",
+        "default": true
+      },
+      "response_mode": {
+        "description": "回应方式",
+        "type": "string",
+        "options": [
+          "random",
+          "llm"
+        ],
+        "labels": [
+          "随机回复文本",
+          "LLM 回复"
+        ],
+        "default": "random",
+        "hint": "随机回复文本：从下方列表随机发送一条；LLM 回复：用下方提示词触发 AstrBot 原有的 LLM 回复链路。"
+      },
+      "reply_texts": {
+        "description": "随机回复文本列表",
+        "type": "list",
+        "items": {
+          "type": "string"
+        },
+        "default": [
+          "在呢，怎么啦？",
+          "别戳啦，有事直说。",
+          "戳我做什么？",
+          "我在这儿。"
+        ],
+        "hint": "回应方式为“随机回复文本”时生效，每次随机发送其中一条。"
+      },
+      "llm_prompt": {
+        "description": "LLM 回复提示词",
+        "type": "text",
+        "default": "用户 {username}（ID：{user_id}）在{scene}里戳了你一下。请保持当前人设，结合最近的对话上下文，自然地回应这次戳一戳，只输出要发送给用户的内容。",
+        "hint": "回应方式为“LLM 回复”时生效。支持 {username}、{user_id}、{scene} 占位符。回复会使用当前对话、人设和上下文。"
+      },
+      "cooldown_seconds": {
+        "description": "同一用户冷却时间（秒）",
+        "type": "int",
+        "default": 0,
+        "hint": "同一会话内同一用户连续戳一戳时的最小回应间隔，0 表示不限制。"
+      }
+    }
+  },
+  "limits": {
+    "description": "返回数量限制",
+    "type": "object",
+    "items": {
+      "max_list_items": {
+        "description": "列表类结果最大条数",
+        "hint": "群成员、好友、点赞、群文件等列表的单次返回上限，超出时请使用分页参数。",
+        "type": "int",
+        "default": 100,
+        "slider": {
+          "min": 10,
+          "max": 500,
+          "step": 10
+        }
+      },
+      "max_message_chars": {
+        "description": "单次消息内容最大字符数",
+        "hint": "群或私聊历史消息返回给模型时的总字符上限。",
+        "type": "int",
+        "default": 8000,
+        "slider": {
+          "min": 1000,
+          "max": 30000,
+          "step": 1000
+        }
+      }
+    }
+  }
+}

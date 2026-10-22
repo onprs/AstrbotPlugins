@@ -1,0 +1,9 @@
+name: astrbot_plugin_qq_api
+display_name: QQ 接口
+short_desc: 将 QQ 群、机器人和用户信息接口暴露给 bot，并支持戳一戳回应
+desc: 通过 OneBot v11 接口为 bot 提供 QQ 群、机器人和用户信息工具；支持读取群资料、成员、公告、文件、消息等，修改群设置与成员状态，查看和修改机器人资料，以及查询其他用户资料。各项能力可在插件配置页独立开关；机器人被戳一戳时可按配置随机回复或走 LLM 回复。
+author: onprs
+version: 1.1.0
+astrbot_version: ">=4.29.0,<5"
+support_platforms:
+  - aiocqhttp
